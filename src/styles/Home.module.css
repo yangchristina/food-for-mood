@@ -5,7 +5,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 6rem;
+  padding: 3rem;
   min-height: 100vh;
 }
 
@@ -295,4 +295,16 @@
 
 .quiz {
   display: inherit;
+}
+
+.images {
+  margin: 20px;
+}
+
+.quizImage {
+  display: inline-grid;
+  cursor: pointer;
+  border-radius: 20px;
+  padding: 10px;
+  border: 1px solid #565b5e; 
 }

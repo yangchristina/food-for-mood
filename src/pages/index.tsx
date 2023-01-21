@@ -1,12 +1,52 @@
 import Head from 'next/head'
-// import Image from 'next/image'
-import Image from 'next/legacy/image'
+import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
-
+import { styled } from '@stitches/react';
+import {useState, useEffect} from 'react'
 const inter = Inter({ subsets: ['latin'] })
 
+const Images = styled('div', {
+  display: 'grid',
+  gap: '10px',
+  gridTemplateColumns: 'auto auto',
+  margin: '10px',
+})
+
+interface Image {
+  url: string,
+  id: number,
+}
+
+type Options = [Image, Image, Image, Image]
+
 export default function Home() {
+  const [allImages, setAllImages] = useState<Options[]>(Array.from(Array(16)).map((x, i)=>{
+    return Array.from(Array(4)).map((y, id)=> ({id, url: ''})) as Options}))
+  const [good, setGood] = useState<Image[]>([])
+  const [bad, setBad] = useState<Image[]>([])
+
+  function getNextImages1(){console.log("hi")}
+
+  function handleImageClick(e: any) {
+    const id = parseInt(e?.target?.id)
+    const images = allImages[0]
+    setGood(x=>[...x, ...images.filter(x=>x.id===id)])
+    setBad(x=>[...x, ...images.filter(x=>x.id!==id)])
+    setAllImages(x=>{
+      x.shift()
+      return [...x]
+    })
+  }
+
+  useEffect(() => {
+    console.log('good')
+    console.log(good)
+    console.log('bad')
+    console.log(bad)
+  }, [allImages])
+  
+  
   return (
     <>
       <Head>
@@ -24,10 +64,18 @@ export default function Home() {
         </div>
 
         <div className={styles.quiz}>
-          <Image src={'/images/img1.jpg'} width={'200'} height={'300'}></Image>
-         
+          <Images>
+            {
+              allImages[0].map((img, i)=>{
+                return <Image id={img.id.toString()} onClick={handleImageClick} className={styles.quizImage} src={`/images/img${i+1}.jpg`} alt={'Image ' + (i+1)} width={'200'} height={'200'}/>
+              })
+            }
+          </Images>
+        
+       
+        
         </div>
-      </main>
+       
     </>
   )
 }
