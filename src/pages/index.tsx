@@ -1,5 +1,6 @@
 import Head from 'next/head'
-import Image from 'next/image'
+// import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 
@@ -23,7 +24,7 @@ export default function Home() {
         </div>
 
         <div className={styles.quiz}>
-          <img src={'./public/images/img1.jpg'}></img>
+          <Image src={'/images/img1.jpg'} width={'200'} height={'300'}></Image>
          
         </div>
       </main>
