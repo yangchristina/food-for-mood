@@ -1,3 +1,5 @@
+/* Old Stuff from base page */
+
 .main {
   display: flex;
   flex-direction: column;
@@ -9,7 +11,7 @@
 
 .description {
   display: inherit;
-  justify-content: inherit;
+  justify-content: center;
   align-items: inherit;
   font-size: 0.85rem;
   max-width: var(--max-width);
@@ -275,4 +277,18 @@
   to {
     transform: rotate(0deg);
   }
+}
+
+/* New Stuff */
+
+.header {
+  display: inherit;
+  justify-content: center;
+  align-items: inherit;
+  font-size: 3rem;
+  font-weight: 700;
+  max-width: var(--max-width);
+  width: 100%;
+  z-index: 2;
+  font-family: var(--font-mono);
 }
