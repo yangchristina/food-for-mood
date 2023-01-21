@@ -71,11 +71,9 @@ export default function Home() {
               })
             }
           </Images>
-        
-       
-        
         </div>
-       
+        
+      </main>
     </>
   )
 }
