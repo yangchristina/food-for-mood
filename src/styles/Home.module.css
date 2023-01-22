@@ -322,4 +322,6 @@
   border-radius: 20px;
   padding: 10px;
   border: 1px solid #565b5e; 
+  background: #dfe6e8;
+  background-clip: border-box
 }

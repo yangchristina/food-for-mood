@@ -82,13 +82,14 @@ export default function Home() {
     <>
       <Head>
         <title>FOOD4MOOD</title>
-        <meta name="description" content="FOOD4MOOD is a food recommendation program" />
+        <meta name="description" content="FOOD4MOOD: a food recommendation program" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/images/logomin.png" />
       </Head>
       <main className={styles.main}>
         <div className={styles.header}>
-          <p>Welcome to FOOD4MOOD!</p>
+          <p>Welcome to </p>
+          <Image src={'/images/logo5.png'} alt={"Logo"} width={'390'} height={'144'} style={{margin: '7px 25px',}}/>
         </div>
 
         {
@@ -115,29 +116,10 @@ export default function Home() {
           :
           <>
           { 
-            !fin ?
+            (fin || allImages.length == 0) ?
             
-              // Quiz page
-              <>
-              <div className={styles.description}>
-                <p>Select the image that you think looks the most appetizing!</p>
-              </div>
-              <div className={styles.quiz}>
-                <Images>
-                  {
-                    allImages[0].map((img, i)=>{
-                      return <Image id={img.id.toString()} onClick={handleImageClick} className={styles.quizImage} src={`/images/img${i+1}.jpg`} alt={'Image ' + (i+1)} width={'200'} height={'200'}/>
-                    })
-                  }
-                </Images>
-              </div>
-              <div>
-                <Button onClick={showResult}>Results</Button>
-                <Button onClick={() => isFinished(false)}>Restart</Button>
-              </div>
-            </>
-            :
             // Results page - images to be determined by Chris's algorithm
+
             <>
               <div className={styles.header2}>
                 <p>Results</p>
@@ -155,6 +137,28 @@ export default function Home() {
                 <Image src={'/images/img7.jpg'} className={styles.quizImage} alt={'Image 7'} width={'200'} height={'200'}/>
               </Results>
               <Button onClick={() => isFinished(false)}>Restart</Button>
+            </>
+              
+            :
+
+            // Quiz page
+            <>
+              <div className={styles.description}>
+                <p>Select the image that you think looks the most appetizing!</p>
+              </div>
+              <div className={styles.quiz}>
+                <Images>
+                  {
+                    allImages[0].map((img, i)=>{
+                      return <Image id={img.id.toString()} onClick={handleImageClick} className={styles.quizImage} src={`/images/img${i+1}.jpg`} alt={'Image ' + (i+1)} width={'200'} height={'200'}/>
+                    })
+                  }
+                </Images>
+              </div>
+              <div>
+                <Button onClick={showResult}>Results</Button>
+                <Button onClick={() => isFinished(false)}>Restart</Button>
+              </div>
             </>
             }
           </>
