@@ -173,10 +173,10 @@ export default function Home() {
                         </Results>
                       </>
                       : <div className={styles.description}>
-                          <p>
+                          <div>
                             Calculating
                             <div className={styles.dotspin}></div>
-                          </p>
+                          </div>
                         </div>}
                     <Button onClick={doRestart} className={styles.hoverButton}>
                             Restart</Button>
