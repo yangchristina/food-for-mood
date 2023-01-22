@@ -377,3 +377,11 @@
     box-shadow: 0 -18px 0 0 #CD3514, 12.727926px -12.727926px 0 0 #CD3514, 18px 0 0 -5px rgba(194, 168, 149, 0), 12.727926px 12.727926px 0 -5px rgba(194, 168, 149, 0), 0 18px 0 -5px rgba(194, 168, 149, 0), -12.727926px 12.727926px 0 -5px rgba(194, 168, 149, 0), -18px 0 0 -5px rgba(194, 168, 149, 0), -12.727926px -12.727926px 0 0 #CD3514;
   }
 }
+
+.hoverButton {
+  color: #FFFFFF;
+}
+
+.hoverButton:hover {
+  color: #CD3514;
+}
