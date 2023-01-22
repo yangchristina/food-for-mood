@@ -84,6 +84,7 @@ export default function Home() {
     isFinished(false);
     isStarted(false);
     isRestart(true);
+    setResults(undefined)
     setGood([]);
     setBad([]);
   }
@@ -120,7 +121,7 @@ export default function Home() {
                 <EmblaViewport ref={viewportRef}>
                   <EmblaContainer>
                     {slides.map((slide, index) => (
-                      <EmblaSlide key={index}>
+                      <EmblaSlide key={slide.name + index}>
                         <EmblaSlideInner>
                           <EmblaSlideImg>
                             <Image
@@ -138,7 +139,7 @@ export default function Home() {
                   </EmblaContainer>
                 </EmblaViewport>
               </Embla>
-              <Button onClick={() => isStarted(true)} className={styles.hoverButton}>
+              <Button onClick={() => {isStarted(true); setResults(undefined)}} className={styles.hoverButton}>
                       Start
                       </Button>
             </>
