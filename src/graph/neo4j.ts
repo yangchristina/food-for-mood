@@ -175,7 +175,7 @@ export async function createRanking(foodIds: string[]) {
     }).join(', ')
 
     const query = `MATCH ${siteMatches}
-                    CALL gds.pageRank.stream('graph4', {
+                    CALL gds.pageRank.stream('foodRank', {
                     maxIterations: 20,
                     relationshipWeightProperty: 'weight',
                     sourceNodes: [${nodeNums}]
