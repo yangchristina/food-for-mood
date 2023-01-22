@@ -54,26 +54,66 @@ export async function createFood(item: Food) {
     }
 }
 
-export async function connectFoods(...foodIds: string[]) {
-    var result = foodIds.flatMap(
-        (v, i) => foodIds.slice(i + 1).map(w => [v, w])
+async function connectFoods(goodFoodIds: string[], badFoodIds: string[]) {
+    const goodResults = goodFoodIds.flatMap(
+        (v, i) => goodFoodIds.slice(i + 1).map(w => [v, w])
     );
-    const promises = result.map(pair => {
-        return createRelationship(pair[0], pair[1])
+    const badResults = badFoodIds.flatMap(
+        (v, i) => badFoodIds.slice(i + 1).map(w => [v, w])
+    );
+    console.log('good')
+    const goodPromises = goodResults.map(pair => {
+        console.log(pair[0], pair[1], 0.8)
+        // return createRelationship(pair[0], pair[1], 0.8)
     })
-    await Promise.all(promises)
+    console.log('bad')
+    const badPromises = badResults.map(pair => {
+        console.log(pair[0], pair[1], 0.05)
+        // return createRelationship(pair[0], pair[1], 0.05)
+    })
+
+    // await Promise.all([...goodPromises, ...badPromises])
 }
 
-async function createRelationship(food1Id: string, food2Id: string) {
+export async function createRanking(foodIds: string[]) {
+    const siteMatches = foodIds.map((id, i)=>{
+        return `(food${i}:Food {id: '${id}'})`
+    }).join(', ')
+    const nodeNums = foodIds.map((id, i)=>{
+        return `food${i}`
+    }).join(', ')
+    
+    const query = `MATCH ${siteMatches}
+                    CALL gds.eigenvector.stream('foodRanks', {
+                    maxIterations: 20,
+                    relationshipWeightProperty: 'weight',
+                    sourceNodes: [${nodeNums}]
+                    })
+                    YIELD nodeId, score
+                    RETURN gds.util.asNode(nodeId).restaurantName AS restaurantName, score
+                    ORDER BY score DESC, restaurantName ASC`;
+    const result = await session.run(query)
+    console.log(result)
+    return result
+}
+
+export async function getResults(goodFoodIds: string[], badFoodIds: string[]) {
+    await connectFoods(goodFoodIds, badFoodIds)
+    return createRanking(goodFoodIds)
+}
+
+async function createRelationship(food1Id: string, food2Id: string, weight: number) {
     const session = driver.session({ database: 'neo4j' })
 
     try {
         // To learn more about the Cypher syntax, see: https://neo4j.com/docs/cypher-manual/current/
         // The Reference Card is also a good resource for keywords: https://neo4j.com/docs/cypher-refcard/current/
-        const writeQuery = `MERGE (f1:Food { id: $food1Id })
-                                MERGE (f2:Food { id: $food2Id })
-                                MERGE (f1)-[:KNOWS]->(f2)
-                                RETURN f1, f2`;
+        const writeQuery = `MATCH
+                                (f1:Food),
+                                (f2:Food)
+                                WHERE f1.id = $food1Id AND f2.id = $food2Id
+                                CREATE (f1)-[r:LIKES {weight: ${weight}}]-(f2)
+                                RETURN f1, f2`
 
         // Write transactions allow the driver to handle retries and transient errors.
         const writeResult = await session.executeWrite(tx =>
@@ -84,7 +124,7 @@ async function createRelationship(food1Id: string, food2Id: string) {
         writeResult.records.forEach(record => {
             const food1Node = record.get('f1');
             const food2Node = record.get('f2');
-            console.info(`Created friendship between: ${food1Node.properties.id}, ${food2Node.properties.id}`);
+            console.info(`Created relationship between: ${food1Node.properties.id}, ${food2Node.properties.id}`);
         });
 
     } catch (error) {

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { connectFoods, createFood, findFood, getAllFoods } from '@/graph/neo4j';
+import { getResults, createFood, findFood, getAllFoods } from '@/graph/neo4j';
 
 export default async function handler(
     req: NextApiRequest,
@@ -29,8 +29,8 @@ export default async function handler(
                 break;
             }
             case 'PATCH': {
-                const { foodIds } = req.body
-                await connectFoods(...foodIds)
+                const { goodFoodIds, badFoodIds } = req.body
+                await getResults(goodFoodIds, badFoodIds)
                 break;
             }
             default:
