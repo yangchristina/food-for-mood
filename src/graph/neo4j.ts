@@ -29,14 +29,9 @@ const session = driver.session({ database: 'neo4j' })
 
 export async function createFood(item: Food) {
     const session = driver.session({ database: 'neo4j' })
-    console.log('in create')
-    console.log('after session')
-
-    console.log(user, password)
 
     try {
         const createQuery = `CREATE (n:Food $props) RETURN n`
-        console.log('absout to query')
         const result = await session.run(
             createQuery,
             { props: {...item, id: uuidv4()} }
@@ -45,8 +40,6 @@ export async function createFood(item: Food) {
         const singleRecord = result.records[0]
         const node = singleRecord.get(0)
 
-        console.log('results out: ')
-        console.log(node)
     } catch (error) {
         console.error(`Something went wrong: ${error}`);
     } finally {
@@ -141,7 +134,7 @@ export async function getAllFoods() {
     let results;
     try {
         const readQuery = `MATCH (p:Food)
-                            RETURN p.restaurantName as restaurantName, p.url as url`;
+                            RETURN p.restaurantName as restaurantName, p.url as url, p.id as id`;
 
         const readResult = await session.executeRead(tx =>
             tx.run(readQuery)
@@ -150,7 +143,8 @@ export async function getAllFoods() {
         results = readResult.records.map(record => {
             return {
                 restaurantName: record.get('restaurantName'),
-                url: record.get('url')
+                url: record.get('url'),
+                id: record.get('id'),
             }
         });
         console.log('results')
