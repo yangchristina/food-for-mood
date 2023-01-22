@@ -1,12 +1,14 @@
 import { Food } from '@/types';
-import neo4j from 'neo4j-driver';
+import neo4j from "neo4j-driver"
 
 const uri = process.env.DB_URI as string;
 const user = process.env.DB_USER as string;
 const password = process.env.DB_PASSWORD as string;
 
+const driver = neo4j.driver(uri, neo4j.auth.basic(user, password))
+const session = driver.session({ database: 'neo4j' })
+
 // To learn more about the driver: https://neo4j.com/docs/javascript-manual/current/client-applications/#js-driver-driver-object
-const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
 
 // try {
 //     const food1Id = 'Alice';
@@ -16,7 +18,7 @@ const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
 
 //     await findFood(driver, food1Id);
 //     await findFood(driver, food2Id);
-// } catch (error) {
+// } catch (error) {P
 //     console.error(`Something went wrong: ${error}`);
 // } finally {
 //     // Don't forget to close the driver connection when you're finished with it.
@@ -24,23 +26,25 @@ const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
 // }
 
 export async function createFood(item: Food) {
+    const session = driver.session({ database: 'neo4j' })
     console.log('in create')
-    const session = driver.session({ database: 'neo4j' });
     console.log('after session')
 
+    console.log(user, password)
+
     try {
-        const createQuery = `CREATE (n:Person $props)
-                                RETURN n`
-                                console.log('absout to query')
-        const createResult = await session.executeWrite(tx =>
-            tx.run(createQuery, {
-                "props": item
-            })
-        );
-        console.log('results out')
-        createResult.records.forEach(record => {
-            console.log(`Found food: ${record.get('id')}`)
-        });
+        const createQuery = `CREATE (n:Food $props) RETURN n`
+        console.log('absout to query')
+        const result = await session.run(
+            createQuery,
+            { props: item }
+        )
+
+        const singleRecord = result.records[0]
+        const node = singleRecord.get(0)
+
+        console.log('results out: ')
+        console.log(node)
     } catch (error) {
         console.error(`Something went wrong: ${error}`);
     } finally {
@@ -52,16 +56,13 @@ export async function connectFoods(...foodIds: string[]) {
     var result = foodIds.flatMap(
         (v, i) => foodIds.slice(i + 1).map(w => [v, w])
     );
-    const promises = result.map(pair=>{
+    const promises = result.map(pair => {
         return createRelationship(pair[0], pair[1])
     })
     await Promise.all(promises)
 }
 
 async function createRelationship(food1Id: string, food2Id: string) {
-
-    // To learn more about sessions: https://neo4j.com/docs/javascript-manual/current/session-api/
-    const session = driver.session({ database: 'neo4j' });
 
     try {
         // To learn more about the Cypher syntax, see: https://neo4j.com/docs/cypher-manual/current/
@@ -91,21 +92,41 @@ async function createRelationship(food1Id: string, food2Id: string) {
     }
 }
 
-export async function findFood(foodId: string) {
 
-    const session = driver.session({ database: 'neo4j' });
+export async function getAllFoods() {
+    try {
+        const readQuery = `MATCH (p:Food)
+                            RETURN p.restaurantName as restaurantName, p.url as url`;
+
+        const readResult = await session.executeRead(tx =>
+            tx.run(readQuery)
+        );
+
+        readResult.records.forEach(record => {
+            console.log(record.get('restaurantName'))
+            console.log(record.get('url'))
+        });
+    } catch (error) {
+        console.error(`Something went wrong: ${error}`);
+    } finally {
+        await session.close();
+    }
+}
+
+export async function findFood(foodId: string) {
 
     try {
         const readQuery = `MATCH (p:Food)
                             WHERE p.id = $foodId
-                            RETURN p.id AS id`;
+                            RETURN p.restaurantName as restaurantName`;
 
         const readResult = await session.executeRead(tx =>
             tx.run(readQuery, { foodId })
         );
+        console.log(readResult)
 
         readResult.records.forEach(record => {
-            console.log(`Found food: ${record.get('id')}`)
+            console.log(record.get('restaurantName'))
         });
     } catch (error) {
         console.error(`Something went wrong: ${error}`);

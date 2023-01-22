@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { createFood } from 'src/graph/neo4j';
+import { connectFoods, createFood, findFood, getAllFoods } from '@/graph/neo4j';
 
 export default async function handler(
     req: NextApiRequest,
@@ -8,10 +8,19 @@ export default async function handler(
     try {
         switch (req.method) {
             case 'GET': {
-                const {} = req.body
+                const { id } = req.query
+                if (id) {
+                    if (typeof id !== 'string') throw new Error('Invalid id')
+                    const item = await findFood(id)
+                    res.status(200).json(item)
+                } else {
+                    const items = await getAllFoods()
+                    res.status(200).json(items)
+                }
                 break;
             }
             case 'POST': {
+                // adds a new food item to graph
                 const food = req.body
                 console.log('in post')
                 await createFood(food)
@@ -19,7 +28,8 @@ export default async function handler(
                 break;
             }
             case 'PATCH': {
-                
+                const { foodIds } = req.body
+                await connectFoods(...foodIds)
                 break;
             }
             default:
