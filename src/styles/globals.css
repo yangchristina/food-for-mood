@@ -85,7 +85,7 @@ body {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
-  animation: bgcolor infinite 50s;
+  animation: bgcolor infinite 30s;
 }
 
 body {
@@ -111,22 +111,22 @@ a {
 
 @keyframes bgcolor {
   0% {
-        background: #e74c3c;
+        background: #cb997e;
   }
   20%{
-        background: #2980b9;
+        background: #ddbea9;
   }
   40%{
-        background: #f1c40f;
+        background: #ffe8d6;
   }
   60%{
-       background: #8e44ad;
+       background: #b7b7a4;
   }
   80%{
-       background: #2c3e50;
+       background: #a5a58d;
   }
-  100%{
-       background: #e74c3c;
+  90%{
+       background: #6b705c;
 
   }
 
