@@ -20,7 +20,7 @@ const inter = Inter({ subsets: ['latin'] })
 type Options = [Image, Image, Image, Image]
 
 export default function Home() {
-  const [viewportRef, embla] = useEmblaCarousel({ skipSnaps: false, loop: true }, [Autoplay()]);
+  const [viewportRef, embla] = useEmblaCarousel({ skipSnaps: false, loop: true, draggable: false }, [Autoplay()]);
 
   const [allImages, setAllImages] = useState<Options[] | undefined>(undefined)
   // (Array.from(Array(16)).map((x, i)=>{return Array.from(Array(4)).map((y, id)=> ({id, url: ''})) as Options}))
@@ -104,7 +104,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <Embla draggable={false}>
+              <Embla>
                 <EmblaViewport ref={viewportRef}>
                   <EmblaContainer>
                     {slides.map((slide, index) => (
