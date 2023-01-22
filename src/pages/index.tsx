@@ -206,7 +206,7 @@ export default function Home() {
                       </Images>
                     </div>
                     <div>
-                      <Button onClick={showResult} className={styles.hoverButton}>Results</Button>
+                      <Button disabled={!good?.length && !bad?.length} onClick={showResult} className={styles.hoverButton}>Results</Button>
                       <Button onClick={handleSkip} className={styles.hoverButton}>Skip</Button>
                       <Button onClick={doRestart} className={styles.hoverButton}>Restart</Button>
                     </div>
