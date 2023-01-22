@@ -41,11 +41,11 @@ export default async function handler(
                 //     'de4a4392-00a9-4a37-aee1-228019c1738b',
                 //     'e3f7be9b-b95c-4ce9-9e91-474266929d16'
                 // ])
-                await createRanking([
-                    '01fad79c-65da-4ea3-b22c-318dc0eb057b',
-                    '2b84f1c0-08a5-4c96-8951-52a5589c8f27',
-                    '8365a2db-766b-4240-82b5-cfd1365b8e7c',
-                ])
+                // await createRanking([
+                //     '01fad79c-65da-4ea3-b22c-318dc0eb057b',
+                //     '2b84f1c0-08a5-4c96-8951-52a5589c8f27',
+                //     '8365a2db-766b-4240-82b5-cfd1365b8e7c',
+                // ])
                 res.status(200).end("Sucessfully patch")
                 break;
             }
