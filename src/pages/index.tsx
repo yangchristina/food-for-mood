@@ -206,7 +206,7 @@ export default function Home() {
                       </Images>
                     </div>
                     <div>
-                      <Button disabled={!good?.length && !bad?.length} onClick={showResult} className={styles.hoverButton}>Results</Button>
+                      <Button isGray={!good?.length && !bad?.length} disabled={!good?.length && !bad?.length} onClick={showResult} className={styles.hoverButton}>Results</Button>
                       <Button onClick={handleSkip} className={styles.hoverButton}>Skip</Button>
                       <Button onClick={doRestart} className={styles.hoverButton}>Restart</Button>
                     </div>
@@ -245,6 +245,17 @@ const Button = styled("button", {
   margin: '10px 3px',
   cursor: 'pointer',
   fontFamily: 'Jua',
+  variants: {
+    isGray: {
+      true: {
+        backgroundColor: 'Gray',
+        opacity: 0.3,
+        '&::hover': {
+          color: '#FFFFFF'
+        }
+      }
+    }
+  }
 })
 
 const dimensions = {
