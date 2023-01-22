@@ -4,6 +4,10 @@ import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import { styled } from '@stitches/react';
 import React, {useState, useEffect} from 'react'
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay'
+
+
 const inter = Inter({ subsets: ['latin'] })
 
 const Images = styled('div', {

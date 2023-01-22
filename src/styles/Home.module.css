@@ -29,6 +29,7 @@
 }
 
 .description p {
+  color: #131414;
   position: relative;
   margin: 0;
   padding: 1rem;
@@ -288,6 +289,7 @@
   align-items: inherit;
   font-size: 3rem;
   font-weight: 700;
+  color: #131414;
   max-width: var(--max-width);
   width: 100%;
   z-index: 2;
@@ -301,6 +303,7 @@
   align-items: inherit;
   font-size: 1.5rem;
   font-weight: 400;
+  color: #131414;
   max-width: var(--max-width);
   width: 100%;
   z-index: 2;
