@@ -20,12 +20,6 @@ const Images = styled('div', {
   margin: '10px',
 })
 
-const ImageBanner = styled('div', {
-  display: 'flex',
-  margin: '10px',
-  gap: '10px',
-})
-
 const Results = styled('div', {
   display: 'grid',
   gap: '10px',
@@ -50,7 +44,7 @@ interface Image {
 
 const dimensions = {
   width: '75vw',
-  aspectRatio: '2 / 1',
+  aspectRatio: '4.5 / 1',
 }
 
 const Embla = styled('div', {
