@@ -45,19 +45,20 @@ export default function Home() {
     })
   }
 
-  useEffect(() => {
-    console.log('good')
-    console.log(good)
-    console.log('bad')
-    console.log(bad)
-  }, [allImages])
+  // useEffect(() => {
+  //   console.log('good')
+  //   console.log(good)
+  //   console.log('bad')
+  //   console.log(bad)
+  // }, [allImages])
+
+  async function getAllImages() {
+    const items = await fetcher('api', 'GET')
+    setAllImages(items)
+  }
 
   useEffect(() => {
-    async function get() {
-      const items = await fetcher('api', 'GET')
-      setAllImages(items)
-    }
-    get()
+    getAllImages()
   }, [])
 
   async function showResult() {
@@ -137,11 +138,11 @@ export default function Home() {
                   </EmblaContainer>
                 </EmblaViewport>
               </Embla>
-              <Button onClick={() => isStarted(true)} 
-                      onMouseEnter={() => {setTextColour('#CD3514')}} 
-                      onMouseLeave={() => {setTextColour('#FFFFFF')}}>
-                      Start
-                      </Button>
+              <Button onClick={() => isStarted(true)}
+                onMouseEnter={() => { setTextColour('#CD3514') }}
+                onMouseLeave={() => { setTextColour('#FFFFFF') }}>
+                Start
+              </Button>
             </>
             :
             <>
@@ -165,7 +166,7 @@ export default function Home() {
                         </div>
                         <Results>
                           {
-                            results.slice(1).map(x=>{
+                            results.slice(1).map(x => {
                               return <Image key={x.id} src={x.url} className={styles.quizImage} alt={'Image 3'} width={'200'} height={'200'} />
                             })
                           }
@@ -174,15 +175,15 @@ export default function Home() {
                         </Results>
                       </>
                       : <div className={styles.description}>
-                          <p>
-                            Calculating
-                            <div className={styles.dotspin}></div>
-                          </p>
-                        </div>}
+                        <div>
+                          Calculating
+                          <div className={styles.dotspin}></div>
+                        </div>
+                      </div>}
                     <Button onClick={doRestart}
-                            onMouseEnter={() => {setTextColour('#CD3514')}} 
-                            onMouseLeave={() => {setTextColour('#FFFFFF')}}>
-                            Restart</Button>
+                      onMouseEnter={() => { setTextColour('#CD3514') }}
+                      onMouseLeave={() => { setTextColour('#FFFFFF') }}>
+                      Restart</Button>
                   </>
 
                   :
@@ -190,10 +191,10 @@ export default function Home() {
                   // Quiz page
                   <>
                     <div className={styles.description}>
-                      <p>Select the image that you think looks the most appetizing! 
-                        Once you're finished, click the 'Results' button below. If 
+                      <p>Select the image that you think looks the most appetizing!
+                        Once you're finished, click the 'Results' button below. If
                         you'd like to restart the selection quiz, click the 'Restart'
-                        button below. 
+                        button below.
                       </p>
                     </div>
                     <div className={styles.quiz}>
@@ -207,13 +208,13 @@ export default function Home() {
                     </div>
                     <div>
                       <Button onClick={showResult}
-                              onMouseEnter={() => {setTextColour('#CD3514')}} 
-                              onMouseLeave={() => {setTextColour('#FFFFFF')}}>
-                                Results</Button>
+                        onMouseEnter={() => { setTextColour('#CD3514') }}
+                        onMouseLeave={() => { setTextColour('#FFFFFF') }}>
+                        Results</Button>
                       <Button onClick={doRestart}
-                              onMouseEnter={() => {setTextColour('#CD3514')}} 
-                              onMouseLeave={() => {setTextColour('#FFFFFF')}}>
-                                Restart</Button>
+                        onMouseEnter={() => { setTextColour('#CD3514') }}
+                        onMouseLeave={() => { setTextColour('#FFFFFF') }}>
+                        Restart</Button>
                     </div>
                   </>
               }
@@ -224,7 +225,7 @@ export default function Home() {
     </>
   )
 
-  
+
 }
 
 const Images = styled('div', {
