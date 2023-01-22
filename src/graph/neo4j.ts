@@ -1,5 +1,7 @@
 import { Food } from '@/types';
 import neo4j from "neo4j-driver"
+import { chunk, shuffle } from 'lodash'
+import { v4 as uuidv4 } from 'uuid';
 
 const uri = process.env.DB_URI as string;
 const user = process.env.DB_USER as string;
@@ -37,7 +39,7 @@ export async function createFood(item: Food) {
         console.log('absout to query')
         const result = await session.run(
             createQuery,
-            { props: item }
+            { props: {...item, id: uuidv4()} }
         )
 
         const singleRecord = result.records[0]
@@ -63,6 +65,7 @@ export async function connectFoods(...foodIds: string[]) {
 }
 
 async function createRelationship(food1Id: string, food2Id: string) {
+    const session = driver.session({ database: 'neo4j' })
 
     try {
         // To learn more about the Cypher syntax, see: https://neo4j.com/docs/cypher-manual/current/
@@ -94,6 +97,8 @@ async function createRelationship(food1Id: string, food2Id: string) {
 
 
 export async function getAllFoods() {
+    const session = driver.session({ database: 'neo4j' })
+    let results;
     try {
         const readQuery = `MATCH (p:Food)
                             RETURN p.restaurantName as restaurantName, p.url as url`;
@@ -102,18 +107,27 @@ export async function getAllFoods() {
             tx.run(readQuery)
         );
 
-        readResult.records.forEach(record => {
-            console.log(record.get('restaurantName'))
-            console.log(record.get('url'))
+        results = readResult.records.map(record => {
+            return {
+                restaurantName: record.get('restaurantName'),
+                url: record.get('url')
+            }
         });
+        console.log('results')
+        console.log(results)
     } catch (error) {
         console.error(`Something went wrong: ${error}`);
     } finally {
         await session.close();
+        const items = chunk(shuffle(results), 4)
+        // @ts-expect-error
+        if (items.length > 0 && items.at(-1).length < 4) items.pop()
+        return items
     }
 }
 
 export async function findFood(foodId: string) {
+    const session = driver.session({ database: 'neo4j' })
 
     try {
         const readQuery = `MATCH (p:Food)

@@ -4,6 +4,7 @@ import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import { styled } from '@stitches/react';
 import React, {useState, useEffect} from 'react'
+import { fetcher } from '@/fetch';
 const inter = Inter({ subsets: ['latin'] })
 
 const Images = styled('div', {
@@ -69,6 +70,15 @@ export default function Home() {
     console.log('bad')
     console.log(bad)
   }, [allImages])
+
+  useEffect(()=>{
+    async function get(){
+      const items = await fetcher('api', 'GET')
+      console.log('items')
+      console.log(items)
+    }
+    get()
+  }, [])
   
 
   function showResult(){

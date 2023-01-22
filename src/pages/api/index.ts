@@ -15,6 +15,7 @@ export default async function handler(
                     res.status(200).json(item)
                 } else {
                     const items = await getAllFoods()
+                    console.log(items)
                     res.status(200).json(items)
                 }
                 break;
