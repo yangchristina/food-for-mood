@@ -64,7 +64,8 @@ const Embla = styled('div', {
 
 const EmblaViewport = styled('div', {
   overflow: 'hidden',
-  width: '120%',
+  width: '140%',
+  marginLeft: '-20%',
 })
 
 const EmblaContainer = styled('div', {
@@ -73,12 +74,11 @@ const EmblaContainer = styled('div', {
   WebkitTouchCallout: "none",
   KhtmlUserSelect: "none",
   WebkitTapHighlightColor: "transparent",
-  marginLeft: "-200px"
 })
 
 const EmblaSlide = styled('div', {
   position: "relative",
-  minWidth: "23%",
+  minWidth: "17%",
   paddingLeft: "10px"
 })
 
