@@ -46,7 +46,6 @@ export async function remakeDB() {
     //     nodeCount AS nodes,
     //     relationshipCount AS rels`
 
-    console.log('remakeing')
     const session = driver.session({ database: 'neo4j' })
     const params: any = {}
 
@@ -57,8 +56,7 @@ export async function remakeDB() {
 
     try {
         const createQuery = `CREATE ${createString}`
-        // console.log(createQuery)
-        // console.log(params)
+
         await session.run(
             createQuery,
             params
@@ -71,7 +69,6 @@ export async function remakeDB() {
 }
 
 export async function clearDB() {
-    console.log('in clear')
     const session = driver.session({ database: 'neo4j' })
 
     try {
@@ -114,19 +111,22 @@ export async function connectFoods(goodFoodIds: string[], badFoodIds: string[]) 
     const badResults = badFoodIds.flatMap(
         (v, i) => badFoodIds.slice(i + 1).map(w => [v, w])
     );
+
     const goodMatch = goodResults.map((pair, i) => {
         return `(gf${i}f1:Food {id: '${pair[0]}'}), (gf${i}f2:Food {id: '${pair[1]}'})`
-    }).join(', ')
+    })
 
     const badMatch = badResults.map((pair, i) => {
         return `(bf${i}f1:Food {id: '${pair[0]}'}), (bf${i}f2:Food {id: '${pair[1]}'})`
-    }).join(', ')
+    })
+
+    const match = [...goodMatch, ...badMatch].join(' ,')
 
     const goodCreates = goodResults.map((pair, i) => {
         return `(gf${i}f1)-[gr${i}:LIKES {weight: ${1}}]->(gf${i}f2)`
         // return `(f${i}f1), (f${i}f2:Food {id: '${pair[1]}'})`
         // return await createRelationship(pair[0], pair[1], 0.8)
-    }).join(', ')
+    })
     // console.log(goodPromises)
     // console.log('bad')
     const badCreates = badResults.map((pair, i) => {
@@ -134,14 +134,13 @@ export async function connectFoods(goodFoodIds: string[], badFoodIds: string[]) 
         return `(bf${i}f1)-[br${i}:LIKES {weight: ${0.1}}]->(bf${i}f2)`
         // return createRelationship(pair[0], pair[1], 0.05)
     })
+    const create = [...goodCreates, ...badCreates].join(', ')
 
     try {
-        console.log('relat')
+        // console.log('relat')
         // To learn more about the Cypher syntax, see: https://neo4j.com/docs/cypher-manual/current/
         // The Reference Card is also a good resource for keywords: https://neo4j.com/docs/cypher-refcard/current/
-        const writeQuery = `MATCH ${goodMatch}, ${badMatch} CREATE ${goodCreates}, ${badCreates}`
-
-        console.log(writeQuery)
+        const writeQuery = `MATCH ${match} CREATE ${create}`
 
         // Write transactions allow the driver to handle retries and transient errors.
         const writeResult = await session.executeWrite(tx =>
@@ -165,7 +164,7 @@ export async function connectFoods(goodFoodIds: string[], badFoodIds: string[]) 
     }
 }
 
-export async function createRanking(foodIds: string[]) {
+export async function createRanking(foodIds: string[], id: string) {
     const session = driver.session({ database: 'neo4j' })
     const siteMatches = foodIds.map((id, i) => {
         return `(food${i}:Food {id: '${id}'})`
@@ -175,7 +174,7 @@ export async function createRanking(foodIds: string[]) {
     }).join(', ')
 
     const query = `MATCH ${siteMatches}
-                    CALL gds.pageRank.stream('foodRank', {
+                    CALL gds.pageRank.stream('foodRank${id}', {
                     maxIterations: 20,
                     relationshipWeightProperty: 'weight',
                     sourceNodes: [${nodeNums}]
@@ -183,22 +182,47 @@ export async function createRanking(foodIds: string[]) {
                     YIELD nodeId, score
                     RETURN gds.util.asNode(nodeId).url AS url, score
                     ORDER BY score DESC, url ASC`;
-                    console.log(query)
+
     const result = await session.run(query)
-    console.log(result)
+    // console.log(result)
     await session.close()
 
     const res = result.records.map(record => {
-        return {score: record.get('score'), url: record.get('url')};
+        return { score: record.get('score'), url: record.get('url') };
         // console.info(`Created relationship between: ${food1Node.properties.id}, ${food2Node.properties.id}`);
     });
     // console.log(res[1])
-    return res.slice(0, 5)
+    return res.slice(0, 4)
 }
 
 export async function getResults(goodFoodIds: string[], badFoodIds: string[]) {
     await connectFoods(goodFoodIds, badFoodIds)
-    return createRanking(goodFoodIds)
+
+    const id = uuidv4()
+
+    const session = driver.session({ database: 'neo4j' })
+
+
+    const query = `CALL gds.graph.project(
+        'foodRank${id}',                    
+        'Food',                             
+        {LIKES: {orientation: 'UNDIRECTED', properties: "weight" }}  
+        )
+        YIELD
+        graphName AS graph,
+        relationshipProjection,
+        nodeCount AS nodes,
+        relationshipCount AS rels`
+
+    await session.run(query)
+    await session.close()
+    const res = await createRanking(goodFoodIds, id)
+
+    const session2 = driver.session({ database: 'neo4j' })
+    const dropQuery = `CALL gds.graph.drop('foodRank${id}') YIELD graphName`
+    await session2.run(dropQuery)
+    await session2.close()
+    return res
 }
 
 
@@ -206,7 +230,6 @@ async function createRelationships(food1Id: string, food2Id: string, weight: num
     const session = driver.session({ database: 'neo4j' })
 
     try {
-        console.log('relat')
         // To learn more about the Cypher syntax, see: https://neo4j.com/docs/cypher-manual/current/
         // The Reference Card is also a good resource for keywords: https://neo4j.com/docs/cypher-refcard/current/
         const writeQuery = `MATCH (f1:Food {id: '${food1Id}'}), (f2:Food {id: '${food2Id}'})
@@ -220,7 +243,8 @@ async function createRelationships(food1Id: string, food2Id: string, weight: num
             tx.run(writeQuery)
         );
 
-        console.log(writeResult)
+        // console.log(writeResult)
+
 
         // Check the write results.
         writeResult.records.forEach(record => {
@@ -255,7 +279,7 @@ async function createRelationship(food1Id: string, food2Id: string, weight: numb
             tx.run(writeQuery)
         );
 
-        console.log(writeResult)
+        // console.log(writeResult)
 
         // Check the write results.
         writeResult.records.forEach(record => {
@@ -278,7 +302,7 @@ export async function getAllFoods() {
     let results;
     try {
         const readQuery = `MATCH (p:Food)
-                            RETURN p.restaurantName as restaurantName, p.url as url, p.id as id`;
+                            RETURN p.url as url, p.id as id`;
 
         const readResult = await session.executeRead(tx =>
             tx.run(readQuery)
@@ -286,7 +310,6 @@ export async function getAllFoods() {
 
         results = readResult.records.map(record => {
             return {
-                restaurantName: record.get('restaurantName'),
                 url: record.get('url'),
                 id: record.get('id'),
             }
@@ -309,16 +332,12 @@ export async function findFood(foodId: string) {
     try {
         const readQuery = `MATCH (p:Food)
                             WHERE p.id = $foodId
-                            RETURN p.restaurantName as restaurantName`;
+                            RETURN p.url as url`;
 
         const readResult = await session.executeRead(tx =>
             tx.run(readQuery, { foodId })
         );
-        console.log(readResult)
 
-        readResult.records.forEach(record => {
-            console.log(record.get('restaurantName'))
-        });
     } catch (error) {
         console.error(`Something went wrong: ${error}`);
     } finally {

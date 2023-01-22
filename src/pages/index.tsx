@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import { styled } from '@stitches/react';
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { fetcher } from '@/fetch';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay'
@@ -13,7 +13,7 @@ interface Image {
   id: number,
 }
 
-const slides = [{name: 'img1'}, {name: 'img2'}, {name: 'img3'}, {name: 'img4'}, {name: 'img5'}, {name: 'img6'}, {name: 'img7'}, {name: 'img8'}]
+const slides = [{ name: 'img1' }, { name: 'img2' }, { name: 'img3' }, { name: 'img4' }, { name: 'img5' }, { name: 'img6' }, { name: 'img7' }, { name: 'img8' }]
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,14 +29,15 @@ export default function Home() {
 
   const [start, isStarted] = useState(false);
   const [fin, isFinished] = useState(false);
+  const [results, setResults] = useState<Image[] | undefined>(undefined)
 
   function handleImageClick(e: any) {
     if (!allImages) return
-    const id = parseInt(e?.target?.id)
+    const id = e?.target?.id
     const images = allImages[0]
-    setGood(x=>[...x, ...images.filter(x=>x.id===id)])
-    setBad(x=>[...x, ...images.filter(x=>x.id!==id)])
-    setAllImages(x=>{
+    setGood(x => [...x, ...images.filter(x => x.id === id)])
+    setBad(x => [...x, ...images.filter(x => x.id !== id)])
+    setAllImages(x => {
       if (!x) return x
       x.shift()
       return [...x]
@@ -50,24 +51,26 @@ export default function Home() {
     console.log(bad)
   }, [allImages])
 
-  useEffect(()=>{
-    async function get(){
+  useEffect(() => {
+    async function get() {
       const items = await fetcher('api', 'GET')
-      console.log('items')
-      console.log(items)
       setAllImages(items)
     }
     get()
   }, [])
-  
 
-  function showResult(){
+
+  async function showResult() {
     // Chris & Michelle code of accumulation
     isFinished(true);
+    console.log('results!')
+    const res = await fetcher('api', 'PATCH', { goodFoodIds: good.map(x => x.id), badFoodIds: bad.map(x => x.id) })
+    console.log(res)
+    setResults(res)
   }
 
   const [restart, isRestart] = useState(false);
-  
+
   return (
     <>
       <Head>
@@ -79,96 +82,103 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.header}>
           <p>Welcome to </p>
-          <Image src={'/images/logo5.png'} alt={"Logo"} width={'390'} height={'144'} style={{margin: '7px 25px',}}/>
+          <Image src={'/images/logo5.png'} alt={"Logo"} width={'390'} height={'144'} style={{ margin: '7px 25px', }} />
         </div>
 
         {
           !start || !allImages ?
-          
-          // Start page
-          <>
-            <div className={styles.description}>
-              <p>
-                Food4Mood is a food recommendation program that gives you types of food based on
-                images you've selected. To start using the program, click start below!
-              </p>
-            </div>
 
-            <Embla>
-                <EmblaViewport ref={viewportRef}>
-                    <EmblaContainer>
-                        {slides.map((slide, index) => (
-                            <EmblaSlide key={index}>
-                                <EmblaSlideInner>
-                                    <EmblaSlideImg>
-                                        <Image
-                                            src={`/images/${slide.name}.jpg`}
-                                            className={styles.quizImage} 
-                                            style={{cursor: 'auto',}}
-                                            alt={`/${slide.name}`}
-                                            width={'200'}
-                                            height={'200'}
-                                        />
-                                    </EmblaSlideImg>
-                                </EmblaSlideInner>
-                            </EmblaSlide>
-                        ))}
-                    </EmblaContainer>
-                </EmblaViewport>
-            </Embla>
-            <Button onClick={() => isStarted(true)}>Start</Button>
-          </>
-          :
-          <>
-          {
-            (fin || allImages.length == 0) ?
-            
-            // Results page - images to be determined by Chris's algorithm
-
-            <>
-              <div className={styles.header2}>
-                <p>Results</p>
-              </div>
-              <div className={styles.description} style={{margin: '0px 0px 10px 0px',}}>
-                <p>Your top result was:</p>
-              </div>
-              <Image src={'/images/img1.jpg'} className={styles.quizImage} alt={'Image 1'} width={'200'} height={'200'}/>
-              <div className={styles.description} style={{margin: '10px 0px 0px 0px',}}>
-                <p>You may also enjoy:</p>
-              </div>
-              <Results>
-                <Image src={'/images/img3.jpg'} className={styles.quizImage} alt={'Image 3'} width={'200'} height={'200'}/>
-                <Image src={'/images/img5.jpg'} className={styles.quizImage} alt={'Image 5'} width={'200'} height={'200'}/>
-                <Image src={'/images/img7.jpg'} className={styles.quizImage} alt={'Image 7'} width={'200'} height={'200'}/>
-              </Results>
-              <Button onClick={() => isFinished(false)}>Restart</Button>
-            </>
-              
-            :
-
-            // Quiz page
+            // Start page
             <>
               <div className={styles.description}>
-                <p>Select the image that you think looks the most appetizing!</p>
+                <p>
+                  Food4Mood is a food recommendation program that gives you types of food based on
+                  images you've selected. To start using the program, click start below!
+                </p>
               </div>
-              <div className={styles.quiz}>
-                <Images>
-                  {
-                    allImages[0].map((img, i)=>{
-                      return <Image key={img.id} id={img.id.toString()} onClick={handleImageClick} className={styles.quizImage} src={img.url} alt={'Image ' + (i+1)} width={'200'} height={'200'}/>
-                    })
-                  }
-                </Images>
-              </div>
-              <div>
-                <Button onClick={showResult}>Results</Button>
-                <Button onClick={() => isFinished(false)}>Restart</Button>
-              </div>
+
+              <Embla>
+                <EmblaViewport ref={viewportRef}>
+                  <EmblaContainer>
+                    {slides.map((slide, index) => (
+                      <EmblaSlide key={index}>
+                        <EmblaSlideInner>
+                          <EmblaSlideImg>
+                            <Image
+                              src={`/images/${slide.name}.jpg`}
+                              className={styles.quizImage}
+                              style={{ cursor: 'auto', }}
+                              alt={`/${slide.name}`}
+                              width={'200'}
+                              height={'200'}
+                            />
+                          </EmblaSlideImg>
+                        </EmblaSlideInner>
+                      </EmblaSlide>
+                    ))}
+                  </EmblaContainer>
+                </EmblaViewport>
+              </Embla>
+              <Button onClick={() => isStarted(true)}>Start</Button>
             </>
-            }
-          </>
-          
-      }
+            :
+            <>
+              {
+                (fin || allImages.length == 0) ?
+
+                  // Results page - images to be determined by Chris's algorithm
+
+                  <>
+                    <div className={styles.header2}>
+                      <p>Results</p>
+                    </div>
+                    {results ?
+                      <>
+                        <div className={styles.description} style={{ margin: '0px 0px 10px 0px', }}>
+                          <p>Your top result was:</p>
+                        </div>
+                        <Image src={results[0].url} className={styles.quizImage} alt={'Image 1'} width={'200'} height={'200'} />
+                        <div className={styles.description} style={{ margin: '10px 0px 0px 0px', }}>
+                          <p>You may also enjoy:</p>
+                        </div>
+                        <Results>
+                          {
+                            results.slice(1).map(x=>{
+                              return <Image key={x.id} src={x.url} className={styles.quizImage} alt={'Image 3'} width={'200'} height={'200'} />
+                            })
+                          }
+                          {/* <Image src={'/images/img5.jpg'} className={styles.quizImage} alt={'Image 5'} width={'200'} height={'200'} />
+                          <Image src={'/images/img7.jpg'} className={styles.quizImage} alt={'Image 7'} width={'200'} height={'200'} /> */}
+                        </Results>
+                      </> : <div>loading...</div>}
+                    <Button onClick={() => isFinished(false)}>Restart</Button>
+                  </>
+
+                  :
+
+                  // Quiz page
+                  <>
+                    <div className={styles.description}>
+                      <p>Select the image that you think looks the most appetizing!</p>
+                    </div>
+                    <div className={styles.quiz}>
+                      <Images>
+                        {
+                          allImages[0].map((img, i) => {
+                            return <Image key={img.id} id={img.id.toString()} onClick={handleImageClick} className={styles.quizImage} src={img.url} alt={'Image ' + (i + 1)} width={'200'} height={'200'} />
+                          })
+                        }
+                      </Images>
+                    </div>
+                    <div>
+                      <Button onClick={showResult}>Results</Button>
+                      <Button onClick={() => isFinished(false)}>Restart</Button>
+                    </div>
+                  </>
+              }
+            </>
+
+        }
       </main>
     </>
   )

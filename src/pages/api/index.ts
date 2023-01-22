@@ -15,7 +15,6 @@ export default async function handler(
                     res.status(200).json(item)
                 } else {
                     const items = await getAllFoods()
-                    console.log(items)
                     res.status(200).json(items)
                 }
                 break;
@@ -23,14 +22,14 @@ export default async function handler(
             case 'POST': {
                 // adds a new food item to graph
                 const food = req.body
-                console.log('in post')
                 await createFood(food)
                 res.status(200).end("Sucessfully added food")
                 break;
             }
             case 'PATCH': {
                 const { goodFoodIds, badFoodIds } = req.body
-                await getResults(goodFoodIds, badFoodIds)
+                const items = await getResults(goodFoodIds, badFoodIds)
+                res.status(200).json(items)
                 break;
             }
             default:

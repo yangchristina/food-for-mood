@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['food-ubc.b-cdn.net', 'foodiesfeed.com'],
+    domains: ['food-ubc.b-cdn.net', 'www.foodiesfeed.com'],
   },
 }
 
