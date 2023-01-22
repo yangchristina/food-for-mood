@@ -324,7 +324,9 @@
   padding: 10px;
   border: 1px solid #565b5e; 
   background: #dfe6e8;
-  background-clip: border-box
+  background-clip: border-box;
+  box-shadow: 0px 0px 0px #686a70;
+  transition: box-shadow 0.75s;
 }
 
 .quizImage:hover {
@@ -376,4 +378,13 @@
   87.5% {
     box-shadow: 0 -18px 0 0 #CD3514, 12.727926px -12.727926px 0 0 #CD3514, 18px 0 0 -5px rgba(194, 168, 149, 0), 12.727926px 12.727926px 0 -5px rgba(194, 168, 149, 0), 0 18px 0 -5px rgba(194, 168, 149, 0), -12.727926px 12.727926px 0 -5px rgba(194, 168, 149, 0), -18px 0 0 -5px rgba(194, 168, 149, 0), -12.727926px -12.727926px 0 0 #CD3514;
   }
+}
+
+.hoverButton {
+  color: #FFFFFF;
+  transition: color 0.5s;
+}
+
+.hoverButton:hover {
+  color: #CD3514;
 }

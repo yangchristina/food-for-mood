@@ -30,7 +30,6 @@ export default function Home() {
   const [start, isStarted] = useState(false);
   const [fin, isFinished] = useState(false);
   const [results, setResults] = useState<Image[] | undefined>(undefined)
-  const [textColour, setTextColour] = useState("#FFFFFF")
 
   function handleImageClick(e: any) {
     if (!allImages) return
@@ -78,17 +77,6 @@ export default function Home() {
   }
 
   const [restart, isRestart] = useState(false);
-
-  const Button = styled("button", {
-    backgroundColor: 'black',
-    color: `${textColour}`,
-    fontSize: '20px',
-    padding: '10px 60px',
-    borderRadius: '5px',
-    margin: '10px 3px',
-    cursor: 'pointer',
-    fontFamily: 'Jua',
-  })
 
   return (
     <>
@@ -138,11 +126,9 @@ export default function Home() {
                   </EmblaContainer>
                 </EmblaViewport>
               </Embla>
-              <Button onClick={() => isStarted(true)}
-                onMouseEnter={() => { setTextColour('#CD3514') }}
-                onMouseLeave={() => { setTextColour('#FFFFFF') }}>
-                Start
-              </Button>
+              <Button onClick={() => isStarted(true)} className={styles.hoverButton}>
+                      Start
+                      </Button>
             </>
             :
             <>
@@ -175,15 +161,13 @@ export default function Home() {
                         </Results>
                       </>
                       : <div className={styles.description}>
-                        <div>
-                          Calculating
-                          <div className={styles.dotspin}></div>
-                        </div>
-                      </div>}
-                    <Button onClick={doRestart}
-                      onMouseEnter={() => { setTextColour('#CD3514') }}
-                      onMouseLeave={() => { setTextColour('#FFFFFF') }}>
-                      Restart</Button>
+                          <p>
+                            Calculating
+                            <div className={styles.dotspin}></div>
+                          </p>
+                        </div>}
+                    <Button onClick={doRestart} className={styles.hoverButton}>
+                            Restart</Button>
                   </>
 
                   :
@@ -207,14 +191,8 @@ export default function Home() {
                       </Images>
                     </div>
                     <div>
-                      <Button onClick={showResult}
-                        onMouseEnter={() => { setTextColour('#CD3514') }}
-                        onMouseLeave={() => { setTextColour('#FFFFFF') }}>
-                        Results</Button>
-                      <Button onClick={doRestart}
-                        onMouseEnter={() => { setTextColour('#CD3514') }}
-                        onMouseLeave={() => { setTextColour('#FFFFFF') }}>
-                        Restart</Button>
+                      <Button onClick={showResult} className={styles.hoverButton}>Results</Button>
+                      <Button onClick={doRestart} className={styles.hoverButton}>Restart</Button>
                     </div>
                   </>
               }
@@ -240,6 +218,17 @@ const Results = styled('div', {
   gap: '10px',
   gridTemplateColumns: 'auto auto auto',
   margin: '10px',
+})
+
+const Button = styled("button", {
+  backgroundColor: 'black',
+  color: '#FFFFFF',
+  fontSize: '20px',
+  padding: '10px 60px',
+  borderRadius: '5px',
+  margin: '10px 3px',
+  cursor: 'pointer',
+  fontFamily: 'Jua',
 })
 
 const dimensions = {
