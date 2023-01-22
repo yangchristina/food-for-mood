@@ -30,6 +30,7 @@ export default function Home() {
   const [start, isStarted] = useState(false);
   const [fin, isFinished] = useState(false);
   const [results, setResults] = useState<Image[] | undefined>(undefined)
+  const [textColour, setTextColour] = useState("#FFFFFF")
 
   function handleImageClick(e: any) {
     if (!allImages) return
@@ -59,7 +60,6 @@ export default function Home() {
     get()
   }, [])
 
-
   async function showResult() {
     // Chris & Michelle code of accumulation
     isFinished(true);
@@ -69,7 +69,25 @@ export default function Home() {
     setResults(res)
   }
 
+  async function doRestart() {
+    isFinished(false);
+    isRestart(true);
+    setGood([]);
+    setBad([]);
+  }
+
   const [restart, isRestart] = useState(false);
+
+  const Button = styled("button", {
+    backgroundColor: 'black',
+    color: `${textColour}`,
+    fontSize: '20px',
+    padding: '10px 60px',
+    borderRadius: '5px',
+    margin: '10px 3px',
+    cursor: 'pointer',
+    fontFamily: 'Jua',
+  })
 
   return (
     <>
@@ -97,7 +115,7 @@ export default function Home() {
                 </p>
               </div>
 
-              <Embla>
+              <Embla draggable={false}>
                 <EmblaViewport ref={viewportRef}>
                   <EmblaContainer>
                     {slides.map((slide, index) => (
@@ -119,7 +137,11 @@ export default function Home() {
                   </EmblaContainer>
                 </EmblaViewport>
               </Embla>
-              <Button onClick={() => isStarted(true)}>Start</Button>
+              <Button onClick={() => isStarted(true)} 
+                      onMouseEnter={() => {setTextColour('#CD3514')}} 
+                      onMouseLeave={() => {setTextColour('#FFFFFF')}}>
+                      Start
+                      </Button>
             </>
             :
             <>
@@ -130,7 +152,7 @@ export default function Home() {
 
                   <>
                     <div className={styles.header2}>
-                      <p>Results</p>
+                      <p>Your Results!</p>
                     </div>
                     {results ?
                       <>
@@ -150,8 +172,17 @@ export default function Home() {
                           {/* <Image src={'/images/img5.jpg'} className={styles.quizImage} alt={'Image 5'} width={'200'} height={'200'} />
                           <Image src={'/images/img7.jpg'} className={styles.quizImage} alt={'Image 7'} width={'200'} height={'200'} /> */}
                         </Results>
-                      </> : <div>loading...</div>}
-                    <Button onClick={() => isFinished(false)}>Restart</Button>
+                      </>
+                      : <div className={styles.description}>
+                          <p>
+                            Calculating
+                            <div className={styles.dotspin}></div>
+                          </p>
+                        </div>}
+                    <Button onClick={doRestart}
+                            onMouseEnter={() => {setTextColour('#CD3514')}} 
+                            onMouseLeave={() => {setTextColour('#FFFFFF')}}>
+                            Restart</Button>
                   </>
 
                   :
@@ -159,7 +190,11 @@ export default function Home() {
                   // Quiz page
                   <>
                     <div className={styles.description}>
-                      <p>Select the image that you think looks the most appetizing!</p>
+                      <p>Select the image that you think looks the most appetizing! 
+                        Once you're finished, click the 'Results' button below. If 
+                        you'd like to restart the selection quiz, click the 'Restart'
+                        button below. 
+                      </p>
                     </div>
                     <div className={styles.quiz}>
                       <Images>
@@ -171,8 +206,14 @@ export default function Home() {
                       </Images>
                     </div>
                     <div>
-                      <Button onClick={showResult}>Results</Button>
-                      <Button onClick={() => isFinished(false)}>Restart</Button>
+                      <Button onClick={showResult}
+                              onMouseEnter={() => {setTextColour('#CD3514')}} 
+                              onMouseLeave={() => {setTextColour('#FFFFFF')}}>
+                                Results</Button>
+                      <Button onClick={doRestart}
+                              onMouseEnter={() => {setTextColour('#CD3514')}} 
+                              onMouseLeave={() => {setTextColour('#FFFFFF')}}>
+                                Restart</Button>
                     </div>
                   </>
               }
@@ -182,6 +223,8 @@ export default function Home() {
       </main>
     </>
   )
+
+  
 }
 
 const Images = styled('div', {
@@ -197,17 +240,6 @@ const Results = styled('div', {
   gridTemplateColumns: 'auto auto auto',
   margin: '10px',
 })
-
-const Button = styled("button", {
-  backgroundColor: 'black',
-  color: 'white',
-  fontSize: '20px',
-  padding: '10px 60px',
-  borderRadius: '5px',
-  margin: '10px 3px',
-  cursor: 'pointer',
-})
-
 
 const dimensions = {
   width: '75vw',

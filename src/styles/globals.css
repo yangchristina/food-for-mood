@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Jua:regular,bold,italic&subset=latin,latin-ext');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:regular,bold,italic&subset=latin,latin-ext');
+
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
@@ -110,24 +114,20 @@ a {
 }
 
 @keyframes bgcolor {
-  0% {
-        background: #cb997e;
+  0%, 100% {
+    background: #cb997e;
   }
-  20%{
-        background: #ddbea9;
+  15%, 90% {
+    background: #ddbea9;
   }
-  40%{
-        background: #ffe8d6;
+  25%, 80% {
+    background: #b7b7a4;
   }
-  60%{
-       background: #b7b7a4;
+  40%, 70% {
+    background: #a5a58d;
   }
-  80%{
-       background: #a5a58d;
-  }
-  100%{
-       background: #6b705c;
-
+  55% {
+    background: #6b705c;
   }
 
 }
