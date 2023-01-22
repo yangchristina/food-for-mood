@@ -44,6 +44,17 @@ export default function Home() {
     })
   }
 
+  function handleSkip(e:any) {
+    if (!allImages) return
+    const id = e?.target?.id
+    const images = allImages[0]
+    setAllImages(x => {
+      if (!x) return x
+      x.shift()
+      return [...x]
+    })
+  }
+
   // useEffect(() => {
   //   console.log('good')
   //   console.log(good)
@@ -71,6 +82,7 @@ export default function Home() {
 
   async function doRestart() {
     isFinished(false);
+    isStarted(false);
     isRestart(true);
     setGood([]);
     setBad([]);
@@ -176,9 +188,10 @@ export default function Home() {
                   <>
                     <div className={styles.description}>
                       <p>Select the image that you think looks the most appetizing!
-                        Once you're finished, click the 'Results' button below. If
-                        you'd like to restart the selection quiz, click the 'Restart'
-                        button below.
+                        Once you're finished, click the 'Results' button below. If none 
+                        of the food options look appetizing, click 'Skip' to refresh
+                        the quiz options. If you'd like to restart the selection quiz, click 
+                        the 'Restart' button below.
                       </p>
                     </div>
                     <div className={styles.quiz}>
@@ -192,6 +205,7 @@ export default function Home() {
                     </div>
                     <div>
                       <Button onClick={showResult} className={styles.hoverButton}>Results</Button>
+                      <Button onClick={handleSkip} className={styles.hoverButton}>Skip</Button>
                       <Button onClick={doRestart} className={styles.hoverButton}>Restart</Button>
                     </div>
                   </>
