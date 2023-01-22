@@ -1,5 +1,5 @@
 export interface Image {
     restaurantName: string,
-    location: string,
+    // location: string,
     url: string;
 }
