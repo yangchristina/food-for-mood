@@ -324,7 +324,9 @@
   padding: 10px;
   border: 1px solid #565b5e; 
   background: #dfe6e8;
-  background-clip: border-box
+  background-clip: border-box;
+  box-shadow: 0px 0px 0px #686a70;
+  transition: box-shadow 0.75s;
 }
 
 .quizImage:hover {
@@ -380,6 +382,7 @@
 
 .hoverButton {
   color: #FFFFFF;
+  transition: color 0.5s;
 }
 
 .hoverButton:hover {
