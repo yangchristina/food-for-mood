@@ -5,6 +5,12 @@ import styles from '@/styles/Home.module.css'
 import { styled } from '@stitches/react';
 import React, {useState, useEffect} from 'react'
 import { fetcher } from '@/fetch';
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay'
+
+
+const slides = [{name: 'img1'}, {name: 'img2'}, {name: 'img3'}, {name: 'img4'}, {name: 'img5'}, {name: 'img6'}, {name: 'img7'}, {name: 'img8'}]
+
 const inter = Inter({ subsets: ['latin'] })
 
 const Images = styled('div', {
@@ -42,9 +48,67 @@ interface Image {
   id: number,
 }
 
+const dimensions = {
+  width: '75vw',
+  aspectRatio: '2 / 1',
+}
+
+const Embla = styled('div', {
+  position: "relative",
+  padding: "20px",
+  // maxWidth: "670px",
+  marginLeft: "auto",
+  marginRight: "auto",
+  ...dimensions,
+})
+
+const EmblaViewport = styled('div', {
+  overflow: 'hidden',
+  width: '120%',
+})
+
+const EmblaContainer = styled('div', {
+  display: "flex",
+  userSelect: "none",
+  WebkitTouchCallout: "none",
+  KhtmlUserSelect: "none",
+  WebkitTapHighlightColor: "transparent",
+  marginLeft: "-200px"
+})
+
+const EmblaSlide = styled('div', {
+  position: "relative",
+  minWidth: "23%",
+  paddingLeft: "10px"
+})
+
+const EmblaSlideInner = styled('div', {
+  position: 'relative',
+  overflow: 'hidden',
+  // height: '25rem',
+  ...dimensions,
+  size: '100%',
+  // center: 'row',
+})
+
+const EmblaSlideImg = styled('div', {
+  flex: 1,
+  position: "absolute",
+  display: "block",
+  top: "50%",
+  left: "50%",
+  width: "auto",
+  minHeight: "100%",
+  minWidth: "100%",
+  maxWidth: "none",
+  transform: "translate(-50%, -50%)"
+})
+
 type Options = [Image, Image, Image, Image]
 
 export default function Home() {
+  const [viewportRef, embla] = useEmblaCarousel({ skipSnaps: false, loop: true }, [Autoplay()]);
+
   const [allImages, setAllImages] = useState<Options[]>(Array.from(Array(16)).map((x, i)=>{
     return Array.from(Array(4)).map((y, id)=> ({id, url: ''})) as Options}))
   const [good, setGood] = useState<Image[]>([])
@@ -113,14 +177,30 @@ export default function Home() {
                 images you've selected. To start using the program, click start below!
               </p>
             </div>
-            <ImageBanner>
-              <Image src={'/images/img2.jpg'} className={styles.quizImage} alt={'Image 2'} width={'200'} height={'200'}/>
-              <Image src={'/images/img4.jpg'} className={styles.quizImage} alt={'Image 4'} width={'200'} height={'200'}/>
-              <Image src={'/images/img1.jpg'} className={styles.quizImage} alt={'Image 1'} width={'200'} height={'200'}/>
-              <Image src={'/images/img3.jpg'} className={styles.quizImage} alt={'Image 3'} width={'200'} height={'200'}/>
-              <Image src={'/images/img8.jpg'} className={styles.quizImage} alt={'Image 8'} width={'200'} height={'200'}/>
-              <Image src={'/images/img6.jpg'} className={styles.quizImage} alt={'Image 6'} width={'200'} height={'200'}/>
-            </ImageBanner>
+
+            <Embla>
+                <EmblaViewport ref={viewportRef}>
+                    <EmblaContainer>
+                        {slides.map((slide, index) => (
+                            <EmblaSlide key={index}>
+                                <EmblaSlideInner>
+                                    <EmblaSlideImg>
+                                        <Image
+                                            src={`/images/${slide.name}.jpg`}
+                                            className={styles.quizImage} 
+                                            style={{cursor: 'auto',}}
+                                            alt={`/${slide.name}`}
+                                            width={'200'}
+                                            height={'200'}
+                                        />
+                                    </EmblaSlideImg>
+                                </EmblaSlideInner>
+                            </EmblaSlide>
+                        ))}
+                    </EmblaContainer>
+                </EmblaViewport>
+            </Embla>
+
             <Button onClick={() => isStarted(true)}>Start</Button>
           </>
           :
