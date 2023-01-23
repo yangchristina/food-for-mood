@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getResults, createFood, findFood, getAllFoods, clearDB, remakeDB, connectFoods, createRanking } from '@/graph/neo4j';
-
+import { findFood, getAllFoods, clearDB, remakeDB, connectFoods, createRanking, deleteNamedNodes } from '@/graph/neo4j';
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<any>
@@ -28,6 +27,7 @@ export default async function handler(
                 break;
             }
             case 'PATCH': {
+                deleteNamedNodes()
                 // testing only
                 // await connectFoods([
                 //     '01fad79c-65da-4ea3-b22c-318dc0eb057b',

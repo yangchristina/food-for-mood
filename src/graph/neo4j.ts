@@ -221,6 +221,24 @@ export async function getResults(goodFoodIds: string[], badFoodIds: string[]) {
     return res
 }
 
+export async function deleteNamedNodes() {
+    const session = driver.session({ database: 'neo4j' })
+    const query = `CALL gds.graph.list() yield graphName`
+    const result = await session.run(query)
+    const arr = result.records.map(record => {
+        console.log(record)
+        return record.get('graphName');
+    })
+
+    for (let graph of arr) {
+        const dropQuery = `CALL gds.graph.drop('${graph}') YIELD graphName`
+        await session.run(dropQuery)
+    }
+
+    console.log(arr)
+    session.close()
+}
+
 async function createRelationships(food1Id: string, food2Id: string, weight: number) {
     const session = driver.session({ database: 'neo4j' })
 
