@@ -212,18 +212,14 @@ export async function getResults(goodFoodIds: string[], badFoodIds: string[]) {
         nodeCount AS nodes,
         relationshipCount AS rels`
 
-
     await session.run(query)
-    await session.close()
     const res = await createRanking(goodFoodIds, id)
 
     connectFoods(goodFoodIds, badFoodIds)
-    const session2 = driver.session({ database: 'neo4j' })
     const dropQuery = `CALL gds.graph.drop('foodRank${id}') YIELD graphName`
-    session2.run(dropQuery).then(()=>session2.close())
+    await session.run(dropQuery).then(()=>session.close())
     return res
 }
-
 
 async function createRelationships(food1Id: string, food2Id: string, weight: number) {
     const session = driver.session({ database: 'neo4j' })
