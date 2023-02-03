@@ -17,6 +17,21 @@ const slides = [{ name: 'img1' }, { name: 'img2' }, { name: 'img3' }, { name: 'i
 
 const inter = Inter({ subsets: ['latin'] })
 
+const Alert = styled('h2', {
+  color: 'red',
+  position: 'absolute',
+  display: 'flex',
+  alignItems: 'flex-end',
+  justifyContent: 'flex-end',
+  padding: 20,
+  boxSizing: 'border-box',
+  bottom: 0,
+  right: 0,
+  fontFamily: 'Jua',
+  backgroundColor: '#dfe6e84d',
+  borderTopLeftRadius: 10,
+})
+
 type Options = [Image, Image, Image, Image]
 
 export default function Home() {
@@ -215,6 +230,7 @@ export default function Home() {
             </>
 
         }
+        <Alert>NOTE: Database is currently down</Alert>
       </main>
     </>
   )
